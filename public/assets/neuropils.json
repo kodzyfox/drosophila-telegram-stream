@@ -1,0 +1,72 @@
+[
+  {
+    "id": "ME_L",
+    "label": "Left Medulla (Vision)",
+    "color": "#4cc9f0",
+    "file": "assets/neuropil_ME_L.glb",
+    "vertices_count": 5253
+  },
+  {
+    "id": "ME_R",
+    "label": "Right Medulla (Vision)",
+    "color": "#4cc9f0",
+    "file": "assets/neuropil_ME_R.glb",
+    "vertices_count": 5445
+  },
+  {
+    "id": "AL_L",
+    "label": "Left Antennal Lobe (Smell)",
+    "color": "#f72585",
+    "file": "assets/neuropil_AL_L.glb",
+    "vertices_count": 622
+  },
+  {
+    "id": "AL_R",
+    "label": "Right Antennal Lobe (Smell)",
+    "color": "#f72585",
+    "file": "assets/neuropil_AL_R.glb",
+    "vertices_count": 612
+  },
+  {
+    "id": "MB_CA_L",
+    "label": "Mushroom Body Calyx L (Memory)",
+    "color": "#ffd166",
+    "file": "assets/neuropil_MB_CA_L.glb",
+    "vertices_count": 325
+  },
+  {
+    "id": "MB_CA_R",
+    "label": "Mushroom Body Calyx R (Memory)",
+    "color": "#ffd166",
+    "file": "assets/neuropil_MB_CA_R.glb",
+    "vertices_count": 327
+  },
+  {
+    "id": "EB",
+    "label": "Ellipsoid Body (Compass / Navigation)",
+    "color": "#06d6a0",
+    "file": "assets/neuropil_EB.glb",
+    "vertices_count": 252
+  },
+  {
+    "id": "FB",
+    "label": "Fan-shaped Body (Central Complex)",
+    "color": "#118ab2",
+    "file": "assets/neuropil_FB.glb",
+    "vertices_count": 614
+  },
+  {
+    "id": "LH_L",
+    "label": "Left Lateral Horn (Innate Instincts)",
+    "color": "#b5179e",
+    "file": "assets/neuropil_LH_L.glb",
+    "vertices_count": 380
+  },
+  {
+    "id": "LH_R",
+    "label": "Right Lateral Horn (Innate Instincts)",
+    "color": "#b5179e",
+    "file": "assets/neuropil_LH_R.glb",
+    "vertices_count": 334
+  }
+]

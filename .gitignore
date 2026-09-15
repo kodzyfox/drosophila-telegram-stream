@@ -1,0 +1,30 @@
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Local secrets & user channel data
+data/config.json
+data/channel_posts.json
+public/assets/channel_avatar.jpg
+
+# Cached media from Telegram channel
+public/assets/feed_cache/*
+!public/assets/feed_cache/demo_*.jpg
+!public/assets/feed_cache/.gitkeep
+
+# Heavy video recordings and screen captures
+*.mp4
+*.MP3
+*.mov
+*.zip
+
+# OS artifacts
+.DS_Store
+Thumbs.db

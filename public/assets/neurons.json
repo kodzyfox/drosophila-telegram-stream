@@ -1,0 +1,52 @@
+[
+  {
+    "root_id": "720575940608166748",
+    "cell_type": "PAM06",
+    "super_class": "central",
+    "description": "Dopaminergic Reward Neuron (Mushroom Body PAM cluster)",
+    "neurotransmitter": "dopamine",
+    "color": "#00ff88",
+    "file": "assets/neuron_720575940608166748.json",
+    "segments_count": 3863
+  },
+  {
+    "root_id": "720575940617626781",
+    "cell_type": "ORN_DA1",
+    "super_class": "sensory",
+    "description": "Olfactory Receptor Neuron (Pheromone/Odor)",
+    "neurotransmitter": "acetylcholine",
+    "color": "#ff007f",
+    "file": "assets/neuron_720575940617626781.json",
+    "segments_count": 977
+  },
+  {
+    "root_id": "720575940621076500",
+    "cell_type": "L3",
+    "super_class": "optic",
+    "description": "Visual Lamina Interneuron (Contrast/Motion)",
+    "neurotransmitter": "acetylcholine",
+    "color": "#00d4ff",
+    "file": "assets/neuron_720575940621076500.json",
+    "segments_count": 682
+  },
+  {
+    "root_id": "720575940614297640",
+    "cell_type": "EPG",
+    "super_class": "central",
+    "description": "Compass Ring Neuron (Central Complex Heading Direction)",
+    "neurotransmitter": "acetylcholine",
+    "color": "#ffd166",
+    "file": "assets/neuron_720575940614297640.json",
+    "segments_count": 2386
+  },
+  {
+    "root_id": "720575940632499757",
+    "cell_type": "DNp01",
+    "super_class": "descending",
+    "description": "Descending Motor Command Neuron (Brain to Motor Center)",
+    "neurotransmitter": "acetylcholine",
+    "color": "#ff3366",
+    "file": "assets/neuron_720575940632499757.json",
+    "segments_count": 7932
+  }
+]

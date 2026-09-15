@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlyBrain — Цифровая муха в Telegram | Нейроанализ виральности</title>
+  <meta name="description" content="Интерактивная 3D-муха дрозофила с реальным мозгом FlyWire анализирует контент Telegram-канала, оценивает виральность и ставит реакции.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <!-- Three.js and OrbitControls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- 3D WebGL Canvas Container -->
+    <div id="canvas-container"></div>
+    <div id="cinematic-indicator" class="hidden" title="Нажмите, чтобы остановить облет (или клавиша Esc / C)">
+      <div class="rec-dot"></div>
+      <span class="cine-text">CINEMATIC TOUR • 60 FPS</span>
+      <button id="btn-stop-cinematic" class="cine-stop-btn" title="Остановить облет">⏹ СТОП</button>
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <header class="top-nav glass-panel">
+      <div class="nav-brand">
+        <div class="pulse-indicator"></div>
+        <span class="brand-title">FLYBRAIN</span>
+        <span class="brand-sub">NEURAL OS v2.4</span>
+      </div>
+
+      <div class="channel-pill">
+        <span class="channel-icon">📢</span>
+        <span id="nav-channel-name">@fluffy_tail_group</span>
+        <span class="badge live-badge">ONLINE</span>
+      </div>
+
+      <div class="nav-actions">
+        <button id="btn-refresh" class="btn btn-secondary" title="Синхронизировать посты из канала">
+          <span class="icon">🔄</span> Обновить
+        </button>
+        <button id="btn-fly-vision" class="btn btn-secondary" title="Вид от первого лица через фасеточные глаза мухи">
+          <span class="icon">👁️</span> Глазами мухи
+        </button>
+        <button id="btn-clean-mode" class="btn btn-secondary" title="Скрыть интерфейс (оставить только монитор как в видео)">
+          <span class="icon">🔲</span> Скрыть UI
+        </button>
+        <button id="btn-cinematic" class="btn btn-secondary" title="Плавный кинематографический облет для записи видео">
+          <span class="icon">🎬</span> Кино-облет
+        </button>
+        <button id="btn-xray" class="btn btn-secondary" title="Заглянуть внутрь головы мухи в реальный мозг FlyWire">
+          <span class="icon">🧠</span> X-Ray: <span id="xray-status">ВЫКЛ</span>
+        </button>
+        <button id="btn-upload" class="btn btn-secondary" title="Загрузить свое фото для мухи">
+          <span class="icon">📤</span> Фото
+        </button>
+        <button id="btn-sound" class="btn btn-icon" title="Звук нейронных спайков">
+          <span id="sound-icon">🔊</span>
+        </button>
+        <button id="btn-settings" class="btn btn-primary" title="Настройки Telegram Бота">
+          <span class="icon">⚙️</span> Бот
+        </button>
+      </div>
+    </header>
+
+    <!-- Hidden file input for uploading images -->
+    <input type="file" id="file-input" accept="image/*" style="display: none;">
+
+    <!-- Left Controls / Feed Overlay -->
+    <aside class="feed-sidebar glass-panel">
+      <div class="sidebar-header">
+        <div class="sidebar-title">
+          <span>ЛЕНТА ПОСТОВ</span>
+          <span id="posts-counter" class="sub-counter">1 / 4</span>
+        </div>
+        <div class="feed-mode-toggle">
+          <button id="btn-prev-post" class="btn-ctrl" title="Предыдущий пост">◀</button>
+          <button id="btn-auto-scroll" class="btn-ctrl active" title="Автоматическое листание">⏸ АВТО</button>
+          <button id="btn-next-post" class="btn-ctrl" title="Следующий пост">▶</button>
+        </div>
+      </div>
+
+      <div class="post-card-preview">
+        <div class="post-meta">
+          <span id="post-channel-label">@fluffy_tail_group</span>
+          <span id="post-date-label">только что</span>
+        </div>
+        <div id="post-thumbnail-wrap">
+          <img id="post-thumbnail" src="" alt="Текущее фото">
+          <div id="reaction-badge-fly" class="fly-reaction-bubble">🔥</div>
+        </div>
+        <div class="post-caption-box">
+          <p id="post-text-label">Загрузка поста...</p>
+        </div>
+      </div>
+
+      <div class="verdict-card glass-subpanel">
+        <div class="verdict-header">
+          <span class="label-mono">ВЕРДИКТ МУХИ</span>
+          <span id="verdict-reaction-emoji" class="reaction-emoji-big">🔥</span>
+        </div>
+        <div id="verdict-text" class="verdict-title">ВИРУСНЫЙ ХИТ!</div>
+        <p id="verdict-reasoning" class="verdict-desc">Высокий оптический контраст и плотность деталей активировали кластер PAM11.</p>
+        
+        <div class="metrics-grid">
+          <div class="metric-item">
+            <span class="metric-name">Контраст (L1-L3):</span>
+            <span id="metric-contrast" class="metric-val">84%</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-name">Насыщенность (Rh):</span>
+            <span id="metric-saturation" class="metric-val">92%</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-name">Детализация:</span>
+            <span id="metric-edges" class="metric-val">78%</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-name">Теплота тонов:</span>
+            <span id="metric-warmth" class="metric-val">88%</span>
+          </div>
+        </div>
+
+        <div class="action-buttons-row">
+          <button id="btn-force-react" class="btn btn-sm btn-accent">
+            ⚡ Отправить реакцию в TG
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Bottom Dashboard: LIVE NEURAL ACTIVITY (Styled identically to the video!) -->
+    <section class="neural-dashboard glass-panel">
+      <div class="dashboard-header">
+        <div class="live-tag">
+          <span class="live-dot"></span> LIVE NEURAL ACTIVITY
+        </div>
+        <div class="brain-coords-tag">
+          Drosophila melanogaster • 139,255 Neurons • FlyWire FAFB
+        </div>
+      </div>
+
+      <div class="dashboard-content">
+        <!-- Dopamine Activity Section -->
+        <div class="dash-block dopamine-block">
+          <div class="dash-label">DOPAMINE ACTIVITY</div>
+          <div class="dash-value-row">
+            <span id="val-dopamine" class="dash-value glow-green">89.3</span>
+            <span class="dash-unit">Hz</span>
+          </div>
+          <div class="dash-sub">15 PAM11 neurons</div>
+          
+          <div class="osc-container">
+            <div class="osc-label-row">
+              <span>PAM11 FIRING RATE</span>
+              <span id="osc-range">75-115 Hz • AUTO SCALE</span>
+            </div>
+            <canvas id="osc-canvas" width="340" height="42"></canvas>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="dash-divider"></div>
+
+        <!-- Fly Spikes Section -->
+        <div class="dash-block spikes-block">
+          <div class="dash-label">FLY SPIKES</div>
+          <div class="dash-value-row">
+            <span id="val-spikes" class="dash-value glow-cyan">63,207</span>
+          </div>
+          <div class="dash-sub">in 50 ms of neural time</div>
+
+          <div class="virality-bar-container">
+            <div class="virality-label-row">
+              <span>FLY VIRALITY SCORE</span>
+              <span id="val-virality-pct" class="glow-accent">88.4%</span>
+            </div>
+            <div class="progress-track">
+              <div id="virality-bar-fill" class="progress-fill" style="width: 88.4%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3D Camera & Scene Controls -->
+        <div class="dash-block scene-ctrl-block">
+          <div class="dash-label">3D КАМЕРА & РЕЖИМЫ</div>
+          <div class="camera-btn-group">
+            <button class="cam-btn" data-view="front">Вид спереди</button>
+            <button class="cam-btn" data-view="side">Сбоку</button>
+            <button class="cam-btn" data-view="top">Сверху</button>
+            <button class="cam-btn active" data-view="iso">Изометрия</button>
+            <button class="cam-btn btn-cinematic-cam" data-view="cine" id="cam-btn-cine" title="Непрерывный студийный облет 60 FPS">🎬 Кино</button>
+          </div>
+          <div class="fly-behavior-status">
+            <span>ПОВЕДЕНИЕ МУХИ:</span>
+            <span id="fly-status-text" class="status-active">Изучает экран (внимание)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Telegram Bot Settings Modal -->
+    <div id="modal-settings" class="modal-overlay hidden">
+      <div class="modal-card glass-panel">
+        <div class="modal-header">
+          <h3>Подключение Telegram Бота</h3>
+          <button id="btn-close-modal" class="btn-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-desc">
+            Чтобы цифровая муха читала новые посты и ставила реальные реакции в канал <b>@fluffy_tail_group</b>:
+          </p>
+          <ol class="setup-steps">
+            <li>Создайте бота в Telegram через <b>@BotFather</b> и скопируйте HTTP API токен.</li>
+            <li>Добавьте бота в канал <b>@fluffy_tail_group</b> в качестве администратора (с правом <i>«Публикация / Редактирование сообщений»</i>).</li>
+            <li>Вставьте токен ниже и нажмите сохранить!</li>
+          </ol>
+
+          <div class="form-group">
+            <label for="input-bot-token">Telegram Bot Token:</label>
+            <input type="password" id="input-bot-token" placeholder="123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ">
+          </div>
+
+          <div class="form-group">
+            <label for="input-channel">Канал Telegram:</label>
+            <input type="text" id="input-channel" value="@fluffy_tail_group">
+          </div>
+
+          <div class="form-group form-check">
+            <label>
+              <input type="checkbox" id="check-auto-react" checked>
+              Автоматически отправлять реакцию мухи в канал
+            </label>
+          </div>
+
+          <div id="bot-status-msg" class="status-box hidden"></div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-test-bot" class="btn btn-secondary">Проверить бота</button>
+          <button id="btn-save-settings" class="btn btn-primary">Сохранить</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drag & Drop Overlay Indicator -->
+    <div id="drag-drop-overlay" class="drag-drop-overlay hidden">
+      <div class="drag-content">
+        <span class="drag-icon">📸</span>
+        <h2>Перетащите фото сюда</h2>
+        <p>Муха сразу повернется к экрану и просканирует изображение!</p>
+      </div>
+    </div>
+
+    <!-- Restore UI Button (visible when UI is hidden) -->
+    <button id="btn-restore-ui" class="btn-restore-ui hidden" title="Показать интерфейс (Esc)">
+      👁️ Показать интерфейс
+    </button>
+
+    <!-- Fly Vision First-Person Compound Eye HUD Overlay -->
+    <div id="fly-vision-overlay" class="fly-vision-overlay hidden">
+      <div class="compound-eye-mesh"></div>
+      <div class="fly-vision-hud">
+        <div class="hud-item">
+          <span class="hud-label">OMMATIDIA:</span> 780 ACTIVE FACETS
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">SPECTRUM:</span> UV-BLUE-GREEN (Rh1/Rh6)
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">SALIENCY FOCUS:</span> <span id="hud-focus-val">HIGH CONTRAST DETECTED</span>
+        </div>
+        <button id="btn-exit-fly-vision" class="btn btn-sm btn-accent">
+          ◀ Вернуться в 3D обзор
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Viewer and Logic script -->
+  <script src="viewer.js"></script>
+</body>
+</html>
